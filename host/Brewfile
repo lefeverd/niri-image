@@ -1,0 +1,22 @@
+# Host CLI tools, in $HOME. Install brew, then: brew bundle --file=host/Brewfile
+tap "hashicorp/tap"
+tap "updatecli/updatecli"
+
+brew "gh"
+brew "go-task"
+brew "k9s"
+brew "hashicorp/tap/terraform"
+brew "hashicorp/tap/packer"
+brew "hcloud"
+brew "sops"
+brew "age"
+brew "updatecli/updatecli/updatecli"
+brew "tig"
+brew "jq"
+brew "tree"
+brew "tldr"
+brew "git-filter-repo"
+brew "libpq"      # psql client
+brew "fastfetch"
+brew "mtr"
+brew "iperf3"
