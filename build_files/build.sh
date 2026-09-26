@@ -46,7 +46,9 @@ CONTAINERS=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-co
 HW=(steam-devices android-tools lm_sensors nvme-cli smartmontools simple-scan sane-backends-drivers-scanners)
 TOOLS=(wireshark nmap tcpdump strace htop iotop-c iftop ncdu vim-enhanced stow)
 
-dnf5 -y install "${DESKTOP[@]}" "${APPS[@]}" "${BACKUP[@]}" "${VIRT[@]}" \
+# niri Recommends these; DMS covers bar/launcher/lock, ghostty is the terminal
+dnf5 -y install --exclude=waybar,fuzzel,alacritty,swaylock \
+  "${DESKTOP[@]}" "${APPS[@]}" "${BACKUP[@]}" "${VIRT[@]}" \
   "${CONTAINERS[@]}" "${HW[@]}" "${TOOLS[@]}"
 
 # TODO(brother): MFC-J480DW + brscan4 are i386 RPMs installing into /opt (-> /var/opt on
@@ -58,6 +60,8 @@ if rpm -q --quiet gdm || rpm -q --quiet gnome-shell; then echo "GNOME session pu
 
 ### Services
 systemctl enable greetd.service docker.service
+# DMS for every user (on the laptop the restored ~/.config link does the same)
+systemctl --global enable dms.service
 
 ### Cleanup
 dnf5 -y copr disable avengemedia/dms

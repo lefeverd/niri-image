@@ -325,7 +325,10 @@ _build-bib $target_image $tag $type $config: (_rootful_load_image target_image t
       "${target_image}:${tag}"
 
     mkdir -p output
-    sudo mv -f $BUILDTMP/* output/
+    # cp over mv: mv refuses to replace a non-empty output/bootiso from a previous build
+    sudo cp -a --reflink=auto $BUILDTMP/. output/
+    sudo rm -rf $BUILDTMP
+    sudo chown -R "$(id -u):$(id -g)" output/
     sudo rmdir $BUILDTMP
     sudo chown -R $USER:$USER output/
 

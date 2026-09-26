@@ -1,0 +1,2 @@
+# Console/LUKS-prompt keymap: the image initramfs has no vconsole.conf and defaults to us
+kargs = ["vconsole.keymap=be-oss"]

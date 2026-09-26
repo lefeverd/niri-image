@@ -1,5 +1,7 @@
 [customizations.installer.kickstart]
 contents = """
+lang en_GB.UTF-8
+keyboard --vckeymap=be-oss --xlayouts='be (oss)'
 %post
 bootc switch --mutate-in-place --transport registry ghcr.io/lefeverd/niri-image:latest
 %end
@@ -7,6 +9,7 @@ bootc switch --mutate-in-place --transport registry ghcr.io/lefeverd/niri-image:
 
 [customizations.installer.modules]
 enable = [
+  "org.fedoraproject.Anaconda.Modules.Localization",
   "org.fedoraproject.Anaconda.Modules.Storage",
   "org.fedoraproject.Anaconda.Modules.Runtime",
   "org.fedoraproject.Anaconda.Modules.Network",
