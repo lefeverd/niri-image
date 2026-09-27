@@ -32,6 +32,7 @@ DESKTOP=(
   dms dms-greeter greetd matugen cliphist wl-clipboard
   xdg-desktop-portal-gnome xdg-desktop-portal-gtk gnome-keyring
   gvfs-smb gvfs-mtp  # Nautilus smb:// and phones
+  xdg-user-dirs  # creates ~/Documents, ~/Downloads... at login (GNOME pulled it in before)
   ghostty nautilus brightnessctl cava
   jetbrains-mono-fonts
   tuned tuned-ppd
