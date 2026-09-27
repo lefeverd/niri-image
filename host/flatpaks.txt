@@ -1,5 +1,4 @@
-# flathub — install with:
-#   grep -v '^#' host/flatpaks.txt | xargs flatpak install -y flathub
+# flathub apps, installed by install-flatpaks.sh (system-wide)
 # already installed today
 com.bilingify.readest
 com.brave.Browser
@@ -15,13 +14,11 @@ org.localsend.localsend_app
 # moved from RPM
 org.darktable.Darktable
 org.kicad.KiCad
-org.musescore.MuseScore
 fr.handbrake.ghb
 org.shotcut.Shotcut
 org.qbittorrent.qBittorrent
 org.videolan.VLC
 org.remmina.Remmina
-org.gnome.Rhythmbox3
 io.github.Hexchat
 com.github.xournalpp.xournalpp
 org.fedoraproject.MediaWriter
@@ -36,11 +33,10 @@ org.gnome.Showtime
 org.gnome.Snapshot
 io.missioncenter.MissionCenter
 # replacing /opt AppImages
-org.freecad.FreeCAD
 cc.arduino.IDE2
 com.getpostman.Postman
-io.mrarm.mcpelauncher
-# Steam: move ~/.local/share/Steam -> ~/.var/app/com.valvesoftware.Steam/.local/share/Steam first
+#io.mrarm.mcpelauncher
+# Steam: restore-home.sh puts the old ~/.local/share/Steam data into the flatpak dir
 com.valvesoftware.Steam
 com.github.Matoking.protontricks
 # utilities
@@ -50,7 +46,7 @@ org.mozilla.Thunderbird
 org.keepassxc.KeePassXC
 # GUI for the image's syncthing daemon: point it at localhost:8384, don't let it launch its own
 io.github.martchus.syncthingtray
-# NOT flathub: GeForce NOW comes from NVIDIA's own remote (user install):
+# NOT flathub: GeForce NOW comes from NVIDIA's own remote, install-flatpaks.sh adds it (user install):
 #   flatpak remote-add --user GeForceNOW https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow_repo
 #   flatpak install --user GeForceNOW com.nvidia.geforcenow
 # No flatpak: MQTT Explorer (keep AppImage in ~/Applications)

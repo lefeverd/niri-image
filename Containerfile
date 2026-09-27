@@ -2,6 +2,7 @@
 FROM scratch AS ctx
 COPY build_files /
 COPY system_files /system_files
+COPY host /host
 
 # Base Image
 # AMD GPU -> plain base-main (no DE, codecs via negativo17)

@@ -2,6 +2,8 @@
 set -ouex pipefail
 
 cp -avf /ctx/system_files/. /
+# post-install scripts and lists (restore-home.sh, install-flatpaks.sh...), there from first boot
+mkdir -p /usr/share/niri-image && cp -avf /ctx/host /usr/share/niri-image/
 
 ### Third-party repos (removed at the end; the image is rebuilt, never dnf-updated in place)
 dnf5 -y copr enable avengemedia/dms
@@ -48,11 +50,12 @@ CONTAINERS=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-co
 HW=(steam-devices android-tools lm_sensors nvme-cli smartmontools simple-scan sane-backends-drivers-scanners)
 # needs root or capture caps (sudo can't see brew); htop, tcpdump, vim-enhanced come with base-main
 TOOLS=(wireshark nmap strace iotop-c iftop)
+BOOTSTRAP=(git)  # dotfiles and repos before brew exists
 
 # niri Recommends these; DMS covers bar/launcher/lock, ghostty is the terminal
 dnf5 -y install --exclude=waybar,fuzzel,alacritty,swaylock \
   "${DESKTOP[@]}" "${APPS[@]}" "${BACKUP[@]}" "${VIRT[@]}" \
-  "${CONTAINERS[@]}" "${HW[@]}" "${TOOLS[@]}"
+  "${CONTAINERS[@]}" "${HW[@]}" "${TOOLS[@]}" "${BOOTSTRAP[@]}"
 
 # TODO(brother): MFC-J480DW + brscan4 are i386 RPMs installing into /opt (-> /var/opt on
 #   bootc, not shipped with the image). Try driverless IPP/eSCL first; only add if that fails.
