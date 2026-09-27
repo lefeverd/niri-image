@@ -97,10 +97,10 @@ EXC=(
 )
 for r in "${REMAP[@]}"; do EXC+=(--exclude="/${r%%:*}/"); done
 if systemd-detect-virt -q; then
-  # test restore: config, dotfiles, KeePass and IntelliJ only. Nothing may sync or back up from the VM:
+  # test restore: config, dotfiles, browsers, KeePass and IntelliJ only. Nothing may sync or back up from the VM:
   # no user units (backup timers, syncthing), no autostart (insync), and no Insync state, which
   # without its ~/Insync folder could sync local "deletions" to Drive
-  echo "VM detected: restoring config, dotfiles, KeePass and IntelliJ only"
+  echo "VM detected: restoring config, dotfiles, browsers, KeePass and IntelliJ only"
   EXC+=(
     --exclude=/.config/systemd/user/ --exclude=/.config/autostart/ --exclude=/.config/Insync/
     --include=/.config/*** --include=/.ssh/*** --include=/.gnupg/*** --include=/.sdkman/***
@@ -108,6 +108,8 @@ if systemd-detect-virt -q; then
     --include=/.local/share/ --include=/.local/share/JetBrains/*** --include=/.local/share/applications/***
     --include=/syncthing/ --include=/syncthing/keepass/*** --include='/kpass*.key'
     --include=/dotfiles/***  # stow repo: ~/.bash_profile and ~/.bash_aliases link into it
+    --include=/.mozilla/*** --exclude=/.var/app/com.brave.Browser/cache/  # browsers (bookmarks, profiles)
+    --include=/.var/ --include=/.var/app/ --include=/.var/app/com.brave.Browser/***
     --exclude='/*/' --include='/.*' --exclude='*'  # top-level dotfiles, nothing else
   )
   REMAP=("${REMAP[@]:2}")  # keep only the KeePassXC remap
