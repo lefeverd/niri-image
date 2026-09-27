@@ -65,6 +65,26 @@ systemctl enable greetd.service docker.service
 # DMS for every user (on the laptop the restored ~/.config link does the same)
 systemctl --global enable dms.service
 
+### VM networking next to docker
+# /etc/docker/daemon.json sets ip-forward-no-drop so docker leaves the FORWARD policy alone (VM NAT).
+# libvirt puts its bridges in the libvirt zone only at runtime; a firewalld reload (docker triggers
+# one) drops that and VMs lose DHCP, so bind them permanently
+sed 's|</zone>|  <interface name="virbr0"/>\n  <interface name="virbr1"/>\n</zone>|' \
+  /usr/lib/firewalld/zones/libvirt.xml > /etc/firewalld/zones/libvirt.xml
+# nat-nfs: libvirt NAT maps source ports to 1024+ by default, which NFS "secure" exports reject;
+# attach test VMs to this network to mount NFS shares from inside the guest
+install -m 600 /dev/stdin /etc/libvirt/qemu/networks/nat-nfs.xml <<'XML'
+<network>
+  <name>nat-nfs</name>
+  <forward mode='nat'><nat><port start='1' end='65535'/></nat></forward>
+  <bridge name='virbr1' stp='on' delay='0'/>
+  <ip address='192.168.123.1' netmask='255.255.255.0'>
+    <dhcp><range start='192.168.123.2' end='192.168.123.254'/></dhcp>
+  </ip>
+</network>
+XML
+ln -sf ../nat-nfs.xml /etc/libvirt/qemu/networks/autostart/nat-nfs.xml
+
 ### Cleanup
 dnf5 -y copr disable avengemedia/dms
 dnf5 -y copr disable avengemedia/danklinux
