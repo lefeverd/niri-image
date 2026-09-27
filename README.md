@@ -53,7 +53,8 @@ The `host/` folder is shipped in the image at `/usr/share/niri-image/host/`:
    In a VM it only restores a safe subset (no backup timers, sync or autostart).
 2. `./install-flatpaks.sh`: install the Flatpak apps.
 3. `./install-brews.sh`: install Homebrew and the Brewfile.
-4. `distrobox assemble create --file /usr/share/niri-image/host/distrobox.ini`
+4. `./create-distrobox.sh [--replace]`: create the `dev` distrobox (compilers, `-devel` libraries). Then
+   `distrobox enter dev` to build in it, `distrobox upgrade dev` to update it.
 
 ## Updates and rollback
 

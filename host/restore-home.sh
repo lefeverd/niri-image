@@ -140,10 +140,14 @@ echo "== copy"
 copy --info=progress2
 
 echo "== post-install fixes"
-# borgmatic was a venv in /opt; the image ships it in /usr/bin
-for f in "$H/.config/systemd/user/borgmatichome.service" "$H/.config/borgmatic.d/home-restore-check.sh"; do
-  if [ -f "$f" ]; then
-    sed -i 's#/opt/venv/borg/bin/borgmatic#/usr/bin/borgmatic#g' "$f" && echo "fixed borgmatic path: $f"
+# borg/borgmatic were a venv in /opt; the image ships them in /usr/bin. Stow links (~/.bash_aliases...)
+# are resolved so the fix lands in ~/dotfiles, where it shows up as a diff to commit
+for f in "$H/.config/systemd/user/borgmatichome.service" "$H/.config/borgmatic.d/home-restore-check.sh" \
+         "$H/.bashrc" "$H/.bash_aliases" "$H/.bash_profile" "$H/dotfiles/bash/.bashrc"; do
+  [ -e "$f" ] || continue
+  f=$(readlink -f "$f")
+  if grep -q '/opt/venv/borg/bin/' "$f"; then
+    sed -i 's#/opt/venv/borg/bin/#/usr/bin/#g' "$f" && echo "fixed borg path: $f"
   fi
 done
 setfacl -m u:qemu:x "$H"  # libvirt reads VM disks/ISOs under $H (pkg-lists/acls-home.txt)
