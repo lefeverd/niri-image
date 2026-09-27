@@ -42,11 +42,11 @@ com.github.Matoking.protontricks
 # utilities
 com.github.tchx84.Flatseal
 # moved from the image: standalone, no host integration needed
-org.mozilla.Thunderbird
+org.mozilla.thunderbird  # monthly channel; profile was last opened by the 153 RPM, ESR (140) would be a downgrade
 org.keepassxc.KeePassXC
 # GUI for the image's syncthing daemon: point it at localhost:8384, don't let it launch its own
 io.github.martchus.syncthingtray
 # NOT flathub: GeForce NOW comes from NVIDIA's own remote, install-flatpaks.sh adds it (user install):
-#   flatpak remote-add --user GeForceNOW https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow_repo
+#   flatpak remote-add --user GeForceNOW https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo
 #   flatpak install --user GeForceNOW com.nvidia.geforcenow
 # No flatpak: MQTT Explorer (keep AppImage in ~/Applications)

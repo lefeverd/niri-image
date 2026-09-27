@@ -12,6 +12,10 @@ echo "== ${#APPS[@]} apps from flathub"
 sudo flatpak install --system -y --noninteractive --or-update flathub "${APPS[@]}"
 
 echo "== GeForce NOW"
+# the .flatpakrepo carries NVIDIA's GPG key; adding the bare repo URL fails signature checks
 flatpak remote-add --user --if-not-exists GeForceNOW \
-  https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow_repo
+  https://international.download.nvidia.com/GFNLinux/flatpak/geforcenow.flatpakrepo
 flatpak install --user -y --noninteractive --or-update GeForceNOW com.nvidia.geforcenow
+
+# DMS reads the app list at startup; restart it so the new apps show in the launcher
+if systemctl --user -q is-active dms.service; then dms restart; fi

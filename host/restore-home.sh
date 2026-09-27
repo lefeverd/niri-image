@@ -29,7 +29,7 @@ exec > >(tee -a "$LOG.log") 2>&1
 # Apps that moved to Flatpak: copied straight into their sandbox data dirs instead of $H
 REMAP=(
   ".local/share/Steam:.var/app/com.valvesoftware.Steam/.local/share/Steam"
-  ".thunderbird:.var/app/org.mozilla.Thunderbird/.thunderbird"
+  ".thunderbird:.var/app/org.mozilla.thunderbird/.thunderbird"
   ".config/keepassxc:.var/app/org.keepassxc.KeePassXC/config/keepassxc"
 )
 EXC=(
@@ -47,7 +47,7 @@ if systemd-detect-virt -q; then
     --include=/.config/*** --include=/.ssh/*** --include=/.gnupg/*** --include=/.sdkman/***
     --include=/.local/ --include=/.local/bin/***
     --include=/.local/share/ --include=/.local/share/JetBrains/*** --include=/.local/share/applications/***
-    --include=/syncthing/ --include=/syncthing/keepass/***
+    --include=/syncthing/ --include=/syncthing/keepass/*** --include='/kpass*.key'
     --include=/dotfiles/***  # stow repo: ~/.bash_profile and ~/.bash_aliases link into it
     --exclude='/*/' --include='/.*' --exclude='*'  # top-level dotfiles, nothing else
   )

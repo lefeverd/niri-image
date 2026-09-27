@@ -50,7 +50,9 @@ CONTAINERS=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-co
 HW=(steam-devices android-tools lm_sensors nvme-cli smartmontools simple-scan sane-backends-drivers-scanners)
 # needs root or capture caps (sudo can't see brew); htop, tcpdump, vim-enhanced come with base-main
 TOOLS=(wireshark nmap strace iotop-c iftop)
-BOOTSTRAP=(git)  # dotfiles and repos before brew exists
+# git: dotfiles and repos before brew exists; gcc/make: brew builds non-bottled formulae (third-party taps)
+# and rustup, cgo and native npm/pip modules need a system cc
+BOOTSTRAP=(git gcc make)
 
 # niri Recommends these; DMS covers bar/launcher/lock, ghostty is the terminal
 dnf5 -y install --exclude=waybar,fuzzel,alacritty,swaylock \
