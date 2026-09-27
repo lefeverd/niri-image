@@ -25,8 +25,6 @@ enabled=1
 gpgcheck=1
 gpgkey=https://d2t3ff60b2tol4.cloudfront.net/repomd.xml.key
 REPO
-# Belgian eID: the archive RPM ships the repo file + keys
-dnf5 -y install https://eid.belgium.be/sites/default/files/software/eid-archive-fedora-2026-1.noarch.rpm
 
 ### Packages
 DESKTOP=(
@@ -41,7 +39,6 @@ DESKTOP=(
 )
 APPS=(
   code insync  # insync: no flathub build; code: flatpak sandbox breaks terminal/toolchains
-  eid-mw eid-viewer
   gnome-disk-utility btrfs-assistant snapper  # no gparted: its polkit-agent dep drags in gnome-shell + gdm
 )
 BACKUP=(syncthing restic borgbackup borgmatic gocryptfs)
