@@ -326,10 +326,8 @@ _build-bib $target_image $tag $type $config: (_rootful_load_image target_image t
 
     mkdir -p output
     # cp over mv: mv refuses to replace a non-empty output/bootiso from a previous build
-    sudo cp -a --reflink=auto $BUILDTMP/. output/
+    sudo cp -a --reflink=auto $BUILDTMP/* output/
     sudo rm -rf $BUILDTMP
-    sudo chown -R "$(id -u):$(id -g)" output/
-    sudo rmdir $BUILDTMP
     sudo chown -R $USER:$USER output/
 
 # Podman builds the image from the Containerfile and creates a bootable image
