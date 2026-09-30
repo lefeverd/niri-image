@@ -47,10 +47,13 @@ Everything else lives outside the image:
 
 The `host/` folder is shipped in the image at `/usr/share/niri-image/host/`:
 
-1. `sudo ./restore-home.sh [dry] [--borg REPO::ARCHIVE | --restic REPO ...]`: restore `/home` from a pre-install
-   copy on the NAS, a borg archive or a restic snapshot (mounted read-only), moving app data into its Flatpak
-   location and fixing paths, ACLs and SELinux labels.
-   In a VM it only restores a safe subset (no backup timers, sync or autostart).
+1. Restore `/home`, in two steps:
+   - mount the source read-only: `sudo ./mount-nas-copy.sh` (pre-install copy on the NAS) or
+     `sudo ./mount-backup.sh --borg REPO[::ARCHIVE] | --restic REPO ...` (latest archive/snapshot by default,
+     confirmed before mounting). Each prints the `SRC` to restore from and how to unmount.
+   - `sudo ./restore-home.sh [dry] SRC`: copy it into `/home/<user>`, moving app data into its Flatpak
+     location and fixing paths, ACLs and SELinux labels.
+     In a VM it only restores a safe subset (no backup timers, sync or autostart).
 2. `./install-flatpaks.sh`: install the Flatpak apps.
 3. `./install-brews.sh`: install Homebrew and the Brewfile.
 4. `./create-distrobox.sh [--replace]`: create the `dev` distrobox (compilers, `-devel` libraries). Then
