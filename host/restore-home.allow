@@ -1,0 +1,127 @@
+# What restore-home.sh copies back into /home/<user>. Everything else stays in the backup (borg,
+# restic, or the pre-reinstall NAS copy) and can be pulled from there by hand.
+# One path per line, relative to the home folder; a folder brings everything under it.
+# `OLD => NEW` copies OLD to NEW instead: apps that moved to Flatpak read their XDG dirs from
+# ~/.var/app/<id>/{config,data}. Flatpaks with home access may keep using the host path (DBeaver
+# does), so check where the Flatpak actually writes before adding a remap.
+# ~/.var/app/<id> is restored for every app in flatpaks.txt (minus cache/), no need to list them.
+
+## data
+dev
+home
+Documents
+Pictures
+Music
+Videos
+Desktop
+Downloads
+syncthing
+Insync
+IdeaProjects
+Calibre Library
+kicad
+Arduino
+bin
+dotfiles
+pkg-lists
+
+## shell, git, history
+.bashrc
+.bash_profile
+.bash_aliases
+.bash_logout
+.profile
+.gitconfig
+.gitignore_global
+.bash_history
+.psql_history
+.python_history
+.tig_history
+.viminfo
+.vim
+
+## keys, credentials, CLI state
+.ssh
+.gnupg
+.pki
+.pgpass
+.kube
+.docker
+.terraform.d
+.talos
+.argocd
+.cloudflared
+.gitlab
+.android
+.claude
+.claude.json
+.testcontainers.properties
+
+## toolchains (rust, npm, maven, gradle, go modules are re-downloaded)
+.sdkman
+.nvm
+go/bin
+
+## browsers, desktop
+.mozilla
+.icons
+.fontconfig
+
+## ~/.config
+.config/borg
+.config/borgmatic.d
+.config/restic
+.config/sops
+.config/kpass-backup
+.config/systemd
+.config/autostart
+.config/Insync
+.config/syncthing
+.config/Code
+.config/JetBrains
+.config/toolbox
+.config/git
+.config/gh
+.config/go
+.config/gopls
+.config/helm
+.config/hcloud
+.config/k9s
+.config/gcloud
+.config/containers
+.config/libvirt
+.config/ghostty
+.config/niri
+.config/DankMaterialShell
+.config/cava
+.config/nautilus
+.config/gtk-3.0
+.config/mimeapps.list
+.config/simple-scan
+.config/StardewValley
+
+## ~/.local
+.local/bin
+.local/share/applications
+.local/share/Insync
+.local/share/icons
+.local/share/backgrounds
+.local/share/k9s
+.local/share/helm
+.local/share/pki
+.local/share/claude
+.local/share/keyrings
+.local/share/DBeaverData
+.local/share/Euro Truck Simulator 2
+.local/state/syncthing
+.local/state/borgmatic
+
+## apps now on Flatpak
+.thunderbird => .var/app/org.mozilla.thunderbird/.thunderbird
+.config/keepassxc => .var/app/org.keepassxc.KeePassXC/config/keepassxc
+.config/remmina => .var/app/org.remmina.Remmina/config/remmina
+.local/share/remmina => .var/app/org.remmina.Remmina/data/remmina
+.config/darktable => .var/app/org.darktable.Darktable/config/darktable
+.config/hexchat => .var/app/io.github.Hexchat/config/hexchat
+.config/kicad => .var/app/org.kicad.KiCad/config/kicad
+.local/share/kicad => .var/app/org.kicad.KiCad/data/kicad

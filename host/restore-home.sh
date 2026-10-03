@@ -6,8 +6,9 @@
 # Usage: sudo ./restore-home.sh [dry] SRC
 #   dry   dry run only
 #   SRC   the copy of /home/<user>, e.g. /mnt/borg-restore/home/dvd
-# In a VM, user systemd units are skipped: the restored backup timers would write to the
-# real repos, and syncthing would come up with the laptop's device ID.
+# Only what restore-home.allow lists comes back. In a VM, anything that syncs or backs up is
+# skipped too: the restored backup timers would write to the real repos, and syncthing would come
+# up with the laptop's device ID.
 set -euo pipefail
 
 die() { echo "ABORT: $*" >&2; exit 1; }
@@ -34,42 +35,46 @@ LOG=/var/log/restore-home-$(date +%Y%m%d-%H%M%S)
 [ -d "$SRC/.config" ] || die "$SRC has no .config: not a home folder"
 exec > >(tee -a "$LOG.log") 2>&1
 
-# Apps that moved to Flatpak: copied straight into their sandbox data dirs instead of $H
-REMAP=(
-  ".local/share/Steam:.var/app/com.valvesoftware.Steam/.local/share/Steam"
-  ".thunderbird:.var/app/org.mozilla.thunderbird/.thunderbird"
-  ".config/keepassxc:.var/app/org.keepassxc.KeePassXC/config/keepassxc"
-)
-EXC=(
-  --exclude=/.steam/                    # symlinks into ~/.local/share/Steam; the Steam flatpak keeps its own
-  --exclude=/.local/share/containers/   # ~29G of old podman/toolbox storage; images are re-pulled, dev box comes from distrobox.ini
-)
-for r in "${REMAP[@]}"; do EXC+=(--exclude="/${r%%:*}/"); done
+# What comes back is listed in restore-home.allow; the rest stays in the backup
+HERE=$(dirname "$(readlink -f "$0")")
+PATHS=() REMAP=()
+while IFS= read -r l; do
+  [[ $l =~ ^[[:space:]]*(#|$) ]] && continue
+  if [[ $l == *' => '* ]]; then REMAP+=("${l%% => *}:${l#* => }"); else PATHS+=("$l"); fi
+done < "$HERE/restore-home.allow"
+while read -r id _; do PATHS+=(".var/app/$id"); done < <(grep -vE '^[[:space:]]*(#|$)' "$HERE/flatpaks.txt")
+EXC=(--exclude='/.var/app/*/cache/')
+
 if systemd-detect-virt -q; then
-  # test restore: config, dotfiles, browsers, KeePass and IntelliJ only. Nothing may sync or back up from the VM:
-  # no user units (backup timers, syncthing), no autostart (insync), and no Insync state, which
-  # without its ~/Insync folder could sync local "deletions" to Drive
-  echo "VM detected: restoring config, dotfiles, browsers, KeePass and IntelliJ only"
-  EXC+=(
-    --exclude=/.config/systemd/user/ --exclude=/.config/autostart/ --exclude=/.config/Insync/
-    --include=/.config/*** --include=/.ssh/*** --include=/.gnupg/*** --include=/.sdkman/***
-    --include=/.local/ --include=/.local/bin/***
-    --include=/.local/share/ --include=/.local/share/JetBrains/*** --include=/.local/share/applications/***
-    --include=/syncthing/ --include=/syncthing/keepass/*** --include='/kpass*.key'
-    --include=/dotfiles/***  # stow repo: ~/.bash_profile and ~/.bash_aliases link into it
-    --include=/.mozilla/*** --exclude=/.var/app/com.brave.Browser/cache/  # browsers (bookmarks, profiles)
-    --include=/.var/ --include=/.var/app/ --include=/.var/app/com.brave.Browser/***
-    --exclude='/*/' --include='/.*' --exclude='*'  # top-level dotfiles, nothing else
-  )
-  REMAP=("${REMAP[@]:2}")  # keep only the KeePassXC remap
+  # test restore: nothing may sync or back up from the VM: no user units (backup timers, syncthing),
+  # no autostart (insync), no Syncthing identity, and no Insync state, which without its ~/Insync
+  # folder could sync local "deletions" to Drive. Of ~/syncthing only the KeePass db comes back.
+  echo "VM detected: restoring the allowlist minus anything that syncs or backs up"
+  VM_DROP=" .config/systemd .config/autostart .config/Insync .local/share/Insync .config/syncthing .local/state/syncthing syncthing "
+  KEEP=()
+  for p in "${PATHS[@]}"; do [[ $VM_DROP == *" $p "* ]] || KEEP+=("$p"); done
+  PATHS=("${KEEP[@]}" syncthing/keepass)
 fi
+
+# rsync filter: each allowed path, the folders leading to it, nothing else
+FILTER=$(mktemp)
+trap 'rm -f "$FILTER"' EXIT
+{
+  for p in "${PATHS[@]}"; do
+    d=$p
+    while [[ $d == */* ]]; do d=${d%/*}; echo "+ /$d/"; done
+    echo "+ /$p"
+    echo "+ /$p/***"
+  done
+  echo "- *"
+} | awk '!seen[$0]++' > "$FILTER"
 
 # Same xattr handling as run-copy.sh: the NFS copy has no security.*/system.* xattrs, and
 # rsync must not try to strip the SELinux labels of files already in $H
 OPTS=(-aHX --numeric-ids --filter='-x security.*' --filter='-x system.*')
 
 copy() {  # args: extra rsync flags (-n first for a dry run)
-  rsync "$@" "${OPTS[@]}" "${EXC[@]}" "$SRC/" "$H/"
+  rsync "$@" "${OPTS[@]}" "${EXC[@]}" --filter="merge $FILTER" "$SRC/" "$H/"
   for r in "${REMAP[@]}"; do
     local from=${r%%:*} to=${r#*:}
     [ -d "$SRC/$from" ] || continue
@@ -78,9 +83,28 @@ copy() {  # args: extra rsync flags (-n first for a dry run)
   done
 }
 
+# An allowlist fails silently, so show what stays behind: entries at these levels that are
+# neither allowed, inside an allowed path, nor on the way to one
+skipped() {
+  local lvl e rel a
+  for lvl in . .config .local .local/share .local/state .var/app; do
+    [ -d "$SRC/$lvl" ] || continue
+    for e in "$SRC/$lvl"/* "$SRC/$lvl"/.[!.]*; do
+      [ -e "$e" ] || [ -L "$e" ] || continue
+      rel=${e#"$SRC"/}; rel=${rel#./}
+      for a in "${PATHS[@]}" "${REMAP[@]%%:*}"; do
+        [[ $rel == "$a" || $rel == "$a"/* || $a == "$rel"/* ]] && continue 2
+      done
+      printf '  %8s  %s\n' "$(du -sh "$e" 2>/dev/null | cut -f1)" "$rel"
+    done
+  done
+}
+
 echo "== dry run (itemized list: $LOG.dry)"
 copy -n -i --stats > "$LOG.dry"
 grep -E '^(Number of|Total transferred)' "$LOG.dry"
+echo "== left in the backup (not in restore-home.allow; full list: $LOG.skipped)"
+skipped | tee "$LOG.skipped"
 [ "$MODE" = dry ] && { echo "dry run only"; exit 0; }
 read -rp "Proceed with the copy into $H? [y/N] " a
 [ "$a" = y ] || die "cancelled"
@@ -102,7 +126,7 @@ done
 setfacl -m u:qemu:x "$H"  # libvirt reads VM disks/ISOs under $H (pkg-lists/acls-home.txt)
 restorecon -R "$H"        # labels were dropped on the NFS copy
 echo "units pointing at missing files (remove or ignore):"
-find "$H/.config/systemd/user" -xtype l 2>/dev/null | sed 's/^/  /'
+[ ! -d "$H/.config/systemd/user" ] || find "$H/.config/systemd/user" -xtype l | sed 's/^/  /'
 
 cat <<EOF
 == done. log: $LOG.log
