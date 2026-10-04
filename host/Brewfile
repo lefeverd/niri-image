@@ -4,6 +4,7 @@ tap "updatecli/updatecli"
 
 brew "gh"
 brew "go-task"
+brew "kubernetes-cli"  # kubectl
 brew "k9s"
 brew "hashicorp/tap/terraform"
 brew "hashicorp/tap/packer"
