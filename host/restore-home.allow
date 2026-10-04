@@ -101,7 +101,9 @@ go/bin
 .config/StardewValley
 
 ## ~/.local
-.local/bin
+# not all of .local/bin: pip/pipx/uv tool links there point into venvs that don't come back
+# (reinstall with `uv tool install`); CLI tools come from the Brewfile
+.local/bin/claude
 .local/share/applications
 .local/share/Insync
 .local/share/icons
