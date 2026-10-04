@@ -137,6 +137,22 @@ if [ -f "$TB/profiles.ini" ] && ! grep -q "^\[Install$TB_HASH\]" "$TB/profiles.i
     echo "Thunderbird Flatpak -> profile $prof"
   fi
 fi
+# ~/.config/dconf isn't restored (years of GNOME Shell state); the settings worth keeping are a
+# curated ini in the dotfiles. Logged out there is no session bus for `dconf load`, so compile it
+# into the user db, on top of what's already there (the ini wins)
+DCONF_INI=$H/dotfiles/dconf-settings.ini
+if [ -f "$DCONF_INI" ]; then
+  d=$(mktemp -d) && chmod 755 "$d" && mkdir "$d/keys" && echo user-db:user > "$d/profile"  # user db only, no system defaults
+  if runuser -u "$U" -- env DCONF_PROFILE="$d/profile" HOME="$H" dconf dump / > "$d/keys/00-current" \
+     && cp "$DCONF_INI" "$d/keys/10-dotfiles" && dconf compile "$d/user" "$d/keys" \
+     && runuser -u "$U" -- mkdir -p "$H/.config/dconf" \
+     && install -o "$U" -g "$U" -m 644 "$d/user" "$H/.config/dconf/user"; then
+    echo "loaded dconf settings: $DCONF_INI"
+  else
+    echo "dconf load FAILED: run ~/dotfiles/dconf-load.sh after login"
+  fi
+  rm -rf "$d"
+fi
 setfacl -m u:qemu:x "$H"  # libvirt reads VM disks/ISOs under $H (pkg-lists/acls-home.txt)
 restorecon -R "$H"        # labels were dropped on the NFS copy
 echo "units pointing at missing files (remove or ignore):"
