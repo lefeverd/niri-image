@@ -115,6 +115,7 @@ go/bin
 .local/share/Euro Truck Simulator 2
 .local/state/syncthing
 .local/state/borgmatic
+.local/state/DankMaterialShell
 
 ## apps now on Flatpak
 .thunderbird => .var/app/org.mozilla.thunderbird/.thunderbird
