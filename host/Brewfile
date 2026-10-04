@@ -25,3 +25,4 @@ brew "iperf3"
 brew "helmfile"
 brew "dagger"
 brew "uv"         # python tools (uv tool install) and per-script deps (uv run)
+cask "claude-code@latest"  # updated by brew upgrade, not its own auto-updater
