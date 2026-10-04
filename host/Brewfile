@@ -22,3 +22,4 @@ brew "libpq"      # psql client
 brew "fastfetch"
 brew "mtr"
 brew "iperf3"
+brew "helmfile"
