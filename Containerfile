@@ -3,6 +3,8 @@ FROM scratch AS ctx
 COPY build_files /
 COPY system_files /system_files
 COPY host /host
+# public half of the CI signing key, trusted by the image's signature policy (build.sh)
+COPY cosign.pub /cosign.pub
 
 # Base Image
 # AMD GPU -> plain base-main (no DE, codecs via negativo17)

@@ -73,6 +73,14 @@ systemctl --global enable dms.service
 # system_files/usr/share/pki/ca-trust-source/anchors: Firefox, curl... trust the LAN services
 update-ca-trust extract
 
+### Image signature
+# CI signs with cosign; without a policy entry ghcr.io/lefeverd falls to the base's insecureAcceptAnything
+# and updates are never checked. registries.d entry: system_files/etc/containers/registries.d
+install -Dm644 /ctx/cosign.pub /etc/pki/containers/niri-image.pub
+jq '.transports.docker["ghcr.io/lefeverd/niri-image"] = [{"type": "sigstoreSigned",
+  "keyPaths": ["/etc/pki/containers/niri-image.pub"], "signedIdentity": {"type": "matchRepository"}}]' \
+  /etc/containers/policy.json > /tmp/policy.json && mv /tmp/policy.json /etc/containers/policy.json
+
 ### VM networking next to docker
 # /etc/docker/daemon.json sets ip-forward-no-drop so docker leaves the FORWARD policy alone (VM NAT).
 # libvirt puts its bridges in the libvirt zone only at runtime; a firewalld reload (docker triggers

@@ -1,0 +1,4 @@
+# fetch the cosign signatures CI attaches to the image (policy: build.sh "Image signature")
+docker:
+  ghcr.io/lefeverd:
+    use-sigstore-attachments: true

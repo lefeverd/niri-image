@@ -3,7 +3,7 @@ contents = """
 lang en_GB.UTF-8
 keyboard --vckeymap=be-oss --xlayouts='be (oss)'
 %post
-bootc switch --mutate-in-place --transport registry ghcr.io/lefeverd/niri-image:latest
+bootc switch --mutate-in-place --enforce-container-sigpolicy --transport registry ghcr.io/lefeverd/niri-image:latest
 %end
 """
 
