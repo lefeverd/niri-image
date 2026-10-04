@@ -23,3 +23,5 @@ brew "fastfetch"
 brew "mtr"
 brew "iperf3"
 brew "helmfile"
+brew "dagger"
+brew "uv"         # python tools (uv tool install) and per-script deps (uv run)
