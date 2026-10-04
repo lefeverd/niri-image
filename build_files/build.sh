@@ -68,6 +68,11 @@ systemctl enable greetd.service docker.service
 # DMS for every user (on the laptop the restored ~/.config link does the same)
 systemctl --global enable dms.service
 
+### Home CA
+# OPNsense's self-signed CA (KeePass "OPNSense certificates", key stays there), shipped in
+# system_files/usr/share/pki/ca-trust-source/anchors: Firefox, curl... trust the LAN services
+update-ca-trust extract
+
 ### VM networking next to docker
 # /etc/docker/daemon.json sets ip-forward-no-drop so docker leaves the FORWARD policy alone (VM NAT).
 # libvirt puts its bridges in the libvirt zone only at runtime; a firewalld reload (docker triggers
