@@ -123,6 +123,20 @@ for f in "$H/.config/systemd/user/borgmatichome.service" "$H/.config/borgmatic.d
     sed -i 's#/opt/venv/borg/bin/#/usr/bin/#g' "$f" && echo "fixed borg path: $f"
   fi
 done
+# Thunderbird ties a profile to a hash of its install path: the Flatpak's differs from the RPM's, so
+# it finds no profile of its own and starts an empty one. Hand it the profile used last (newest
+# prefs.js). Hash taken from the profiles.ini the 157 Flatpak wrote.
+TB=$H/.var/app/org.mozilla.thunderbird/.thunderbird TB_HASH=BD520B11F73A6B64
+if [ -f "$TB/profiles.ini" ] && ! grep -q "^\[Install$TB_HASH\]" "$TB/profiles.ini"; then
+  prof=$(find "$TB" -mindepth 2 -maxdepth 2 -name prefs.js -printf '%T@ %h\n' | sort -rn | head -1)
+  prof=${prof##*/}
+  if [ -n "$prof" ]; then
+    printf '\n[Install%s]\nDefault=%s\nLocked=1\n' "$TB_HASH" "$prof" >> "$TB/profiles.ini"
+    printf '\n[%s]\nDefault=%s\nLocked=1\n' "$TB_HASH" "$prof" >> "$TB/installs.ini"
+    chown "$U:" "$TB/installs.ini"
+    echo "Thunderbird Flatpak -> profile $prof"
+  fi
+fi
 setfacl -m u:qemu:x "$H"  # libvirt reads VM disks/ISOs under $H (pkg-lists/acls-home.txt)
 restorecon -R "$H"        # labels were dropped on the NFS copy
 echo "units pointing at missing files (remove or ignore):"
