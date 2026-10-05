@@ -25,7 +25,7 @@ Done = the verification output shows the expected state. Report plainly what was
 ## Shipping
 
 - Commit when asked; the user pushes. Machines follow `:latest` on GHCR, so a change reaches the VM/laptop only after push + a green CI run: tell the user to wait for CI before `bootc upgrade`.
-- CI (`.github/workflows/build.yml`) also rebuilds daily. Download timeouts from third-party repos (e.g. download.docker.com) are transient: `gh run rerun <id> --failed`.
+- CI (`.github/workflows/build.yml`) also rebuilds twice a week (Mon/Thu). Download timeouts from third-party repos (e.g. download.docker.com) are transient: `gh run rerun <id> --failed`.
 - Tags: `latest`, `YYYYMMDD`, `YYYYMMDD-<sha>` (unique, for `bootc switch` pinning). `cleanup.yml` keeps the 30 newest tagged builds.
 
 ## Traps

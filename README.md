@@ -4,7 +4,7 @@ A personal [bootc](https://github.com/bootc-dev/bootc) image: Fedora Atomic 44 o
 [`base-main`](https://github.com/ublue-os/main), with the [niri](https://github.com/YaLTeR/niri) scrollable-tiling
 compositor and [DankMaterialShell](https://github.com/AvengeMedia/DankMaterialShell) (DMS).
 
-Image: `ghcr.io/lefeverd/niri-image`, rebuilt on every push and daily, signed with cosign (`cosign.pub`).
+Image: `ghcr.io/lefeverd/niri-image`, rebuilt on every push and twice a week (Mon/Thu), signed with cosign (`cosign.pub`).
 
 This repo started from [ublue-os/image-template](https://github.com/ublue-os/image-template). The Justfile, the
 workflows and the disk-image tooling still come from it; the template's own README is kept in

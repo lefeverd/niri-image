@@ -2,7 +2,7 @@
 name: Clean up old images
 on:
   schedule:
-    - cron: '30 11 * * 0'  # Sundays, after the daily build
+    - cron: '30 11 * * 0'  # Sundays
   workflow_dispatch:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     permissions:
       packages: write
     steps:
-      # Keeps ~a month of daily builds for `bootc switch <tag>` rollbacks; cosign signatures of
+      # Keeps the last 30 builds for `bootc switch <tag>` rollbacks; cosign signatures of
       # deleted images go with them (delete-orphaned-images)
       - uses: dataaxiom/ghcr-cleanup-action@d52806a0dc70b430571a37da1fde39733ffd640f # v1.2.2
         with:
