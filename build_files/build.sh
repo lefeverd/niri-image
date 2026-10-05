@@ -41,7 +41,7 @@ APPS=(
   code insync  # insync: no flathub build; code: flatpak sandbox breaks terminal/toolchains
   gnome-disk-utility btrfs-assistant snapper  # no gparted: its polkit-agent dep drags in gnome-shell + gdm
 )
-BACKUP=(syncthing restic borgbackup borgmatic gocryptfs)
+BACKUP=(syncthing restic borgbackup borgmatic)
 VIRT=(qemu-kvm libvirt virt-manager virt-install virt-viewer)
 CONTAINERS=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
 HW=(steam-devices android-tools lm_sensors nvme-cli smartmontools simple-scan sane-backends-drivers-scanners)

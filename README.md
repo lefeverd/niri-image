@@ -18,7 +18,7 @@ workflows and the disk-image tooling still come from it; the template's own READ
 - **Apps that need host integration**: Firefox (from base-main), VS Code, Insync,
   GNOME Disks, btrfs-assistant + snapper.
 - **Containers and VMs**: Docker CE, libvirt/QEMU + virt-manager.
-- **Backups and sync**: borg, borgmatic, restic, gocryptfs, syncthing.
+- **Backups and sync**: borg, borgmatic, restic, syncthing.
 - **Tools**: git, gcc/make (Homebrew and rustup need a system compiler), wireshark, nmap, strace, iotop, iftop.
 - **Tweaks**:
   - Belgian keyboard (`be-oss`) in the installer and at the LUKS prompt (`kargs.d`).
