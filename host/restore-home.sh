@@ -116,6 +116,7 @@ echo "== post-install fixes"
 # borg/borgmatic were a venv in /opt; the image ships them in /usr/bin. Stow links (~/.bash_aliases...)
 # are resolved so the fix lands in ~/dotfiles, where it shows up as a diff to commit
 for f in "$H/.config/systemd/user/borgmatichome.service" "$H/.config/borgmatic.d/home-restore-check.sh" \
+         "$H/.config/borgmatic.d/home.yaml" \
          "$H/.bashrc" "$H/.bash_aliases" "$H/.bash_profile" "$H/dotfiles/bash/.bashrc"; do
   [ -e "$f" ] || continue
   f=$(readlink -f "$f")
