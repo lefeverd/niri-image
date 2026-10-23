@@ -46,7 +46,8 @@ VIRT=(qemu-kvm libvirt virt-manager virt-install virt-viewer)
 CONTAINERS=(docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin)
 HW=(steam-devices android-tools lm_sensors nvme-cli smartmontools simple-scan sane-backends-drivers-scanners)
 # needs root or capture caps (sudo can't see brew); htop, tcpdump, vim-enhanced come with base-main
-TOOLS=(wireshark nmap strace iotop-c iftop)
+TOOLS=(wireshark nmap strace iotop-c iftop
+  screen)  # serial consoles (OPNsense on /dev/ttyUSB0)
 # git: dotfiles and repos before brew exists; gcc/make: brew builds non-bottled formulae (third-party taps)
 # and rustup, cgo and native npm/pip modules need a system cc
 BOOTSTRAP=(git gcc make)

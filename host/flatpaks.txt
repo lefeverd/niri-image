@@ -23,6 +23,7 @@ io.github.Hexchat
 com.github.xournalpp.xournalpp
 org.fedoraproject.MediaWriter
 org.xonotic.Xonotic
+com.slack.Slack
 # GNOME apps you used, now without GNOME
 org.gnome.Loupe
 org.gnome.Papers
