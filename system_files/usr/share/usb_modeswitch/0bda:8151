@@ -1,0 +1,5 @@
+# Realtek RTL8151 (USB-C dock's "USB 10/100 LAN"): boots as a virtual CD-ROM,
+# switches to the RTL8152 NIC. Not in usb_modeswitch-data 20191128.
+TargetVendor=0x0bda
+TargetProduct=0x8152
+MessageContent="555342430860d9a9c0000000800006e0000000000000000000000000000000"

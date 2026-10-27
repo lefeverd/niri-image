@@ -1,0 +1,2 @@
+# Realtek RTL8151 virtual CD-ROM -> RTL8152 NIC (config: /usr/share/usb_modeswitch/0bda:8151)
+ACTION=="add", SUBSYSTEM=="usb", ATTR{idVendor}=="0bda", ATTR{idProduct}=="8151", RUN+="usb_modeswitch '/%k'"

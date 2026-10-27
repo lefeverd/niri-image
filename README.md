@@ -26,6 +26,8 @@ workflows and the disk-image tooling still come from it; the template's own READ
     firewalld's `libvirt` zone, so VM NAT keeps working next to Docker.
   - An extra libvirt network, `nat-nfs`, keeps privileged source ports so VMs can mount NFS shares.
   - Homebrew is put on PATH once installed (`/etc/profile.d/brew.sh`).
+  - The USB-C dock's Realtek ethernet (`0bda:8151`) starts as a virtual CD-ROM: a udev rule + usb_modeswitch
+    config switch it to its NIC mode (`0bda:8152`), missing from Fedora's 2019 usb_modeswitch data.
 
 Everything else lives outside the image:
 
